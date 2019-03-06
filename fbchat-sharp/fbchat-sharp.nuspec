@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Gave.Libs.Fbchat</id>
+    <version>0.2.8</version>
+    <title>fbchat-sharp</title>
+    <authors>Marco Gavelli</authors>
+    <owners>Marco Gavelli</owners>
+    <licenseUrl>https://github.com/gave92/fbchat-sharp/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/gave92/fbchat-sharp</projectUrl>
+    <iconUrl>https://github.com/gave92/fbchat-sharp/raw/master/fbchat-icon.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Facebook Messenger client library for C#</description>
+    <releaseNotes>Fix for FetchThreadList 'before' parameter.</releaseNotes>
+    <copyright>Copyright 2017-2018 Marco Gavelli</copyright>
+    <tags>facebook messenger chat</tags>
+    <dependencies>
+      <group>
+        <dependency id="AngleSharp" version="0.9.11" />
+        <dependency id="Newtonsoft.Json" version="11.0.2" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\fbchat-sharp.dll" target="lib\netstandard1.2\fbchat-sharp.dll" />
+    <file src="bin\Release\fbchat-sharp.xml" target="lib\netstandard1.2\fbchat-sharp.xml" />
+  </files>
+</package>
