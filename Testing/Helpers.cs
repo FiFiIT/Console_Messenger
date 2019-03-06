@@ -11,6 +11,7 @@ namespace Testing
 {
     class Helpers
     {
+        public static string CookiesFile = "cookies.xml";
         private static List<User> users = new List<User>()
         {
             new User() { nick = "Adrian", uid = "unknow", author = "1833362494" },

@@ -22,7 +22,7 @@ namespace Testing
         {
             bool running = true;
 
-            LogToMessanger().Wait();
+            LogToMessanger();
 
             client.UpdateEvent += Client_UpdateEvent;
             client.StartListening();
@@ -39,7 +39,7 @@ namespace Testing
                 switch (answer)
                 {
                     case "1":
-                        LogToMessanger().Wait();
+                        LogToMessanger();
                         break;
                     case "2":
                         Threads = GetLastThreads();
@@ -124,7 +124,6 @@ namespace Testing
                     bool chatting = true;
                     while (chatting)
                     {
-                        Console.Write("Filip: ");
                         string message = Console.ReadLine();
 
                         if (String.Equals(message, "q", StringComparison.CurrentCultureIgnoreCase))
@@ -156,7 +155,7 @@ namespace Testing
             await client.DoLogout();
         }
 
-        private async static Task<bool> LogToMessanger()
+        private static bool LogToMessanger()
         {
             if (client == null)
             {
@@ -167,9 +166,10 @@ namespace Testing
             string password = "fifiit82.";
 
             // Login with username and password
-            var logged_in = await client.DoLogin(email, password);
+            Task<bool> logged_in = client.DoLogin(email, password);
+            logged_in.Wait();
 
-            if (logged_in)
+            if (logged_in.Result)
             {
                 Console.WriteLine("Successfully loged into the messanger!");
             }
@@ -177,7 +177,7 @@ namespace Testing
                 Console.WriteLine("ERROR: Couldn't connect to messanger");
             }
 
-            return logged_in;
+            return logged_in.Result;
         }
 
         private async static void InstantiateFBClient()
