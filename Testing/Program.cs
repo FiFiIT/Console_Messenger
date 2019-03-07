@@ -24,6 +24,8 @@ namespace Testing
 
             LogToMessanger();
 
+            Helpers.PopulateUsers(client);
+
             client.UpdateEvent += Client_UpdateEvent;
             client.StartListening();
 
@@ -76,7 +78,7 @@ namespace Testing
             string restult = string.Empty;
 
             double timestamp = double.Parse(msg.timestamp);
-            var time = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var time = new System.DateTime(1970, 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var msgTime = time.AddMilliseconds(timestamp).ToShortTimeString();
             var from = Helpers.GetUser(msg.author);
 
@@ -133,7 +135,7 @@ namespace Testing
                             break;
                         }
 
-                        var response = client.SendMessage(message, thread_id: CurrentThreadID, thread_type: ThreadType.GROUP);
+                        var response = client.SendMessage(message, thread_id: CurrentThreadID, thread_type: threads[uid].type);
                         response.Wait();
                     }
                 }
