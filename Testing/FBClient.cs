@@ -11,18 +11,17 @@ namespace Testing
     {
         protected async override Task DeleteCookiesAsync()
         {
-            await Task.Yield();
+            System.IO.File.Delete(Helpers.CookiesFile);
         }
 
         protected async override Task<List<Cookie>> ReadCookiesFromDiskAsync()
         {
-            await Task.Yield();
-            return null;
+            return Helpers.DeSerializeObject<List<Cookie>>(Helpers.CookiesFile);
         }
 
         protected override async Task WriteCookiesToDiskAsync(List<Cookie> cookieJar)
         {
-            await Task.Yield();
+            Helpers.SerializeObject<List<Cookie>>(cookieJar, Helpers.CookiesFile);
         }
     }
 }

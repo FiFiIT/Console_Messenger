@@ -3502,12 +3502,12 @@
   },
   "project": {
     "restore": {
-      "projectUniqueName": "D:\\GitHub\\fbchat-sharp\\fbchat-sharp\\fbchat-sharp.csproj",
+      "projectUniqueName": "D:\\GitHub\\Console_Messenger\\fbchat-sharp\\fbchat-sharp.csproj",
       "projectName": "fbchat-sharp",
-      "projectPath": "D:\\GitHub\\fbchat-sharp\\fbchat-sharp\\fbchat-sharp.csproj",
-      "projectJsonPath": "D:\\GitHub\\fbchat-sharp\\fbchat-sharp\\project.json",
+      "projectPath": "D:\\GitHub\\Console_Messenger\\fbchat-sharp\\fbchat-sharp.csproj",
+      "projectJsonPath": "D:\\GitHub\\Console_Messenger\\fbchat-sharp\\project.json",
       "packagesPath": "C:\\Users\\TYBOFIL\\.nuget\\packages\\",
-      "outputPath": "D:\\GitHub\\fbchat-sharp\\fbchat-sharp\\obj\\",
+      "outputPath": "D:\\GitHub\\Console_Messenger\\fbchat-sharp\\obj\\",
       "projectStyle": "ProjectJson",
       "configFilePaths": [
         "C:\\Users\\TYBOFIL\\AppData\\Roaming\\NuGet\\NuGet.Config",

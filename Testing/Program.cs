@@ -22,7 +22,9 @@ namespace Testing
         {
             bool running = true;
 
-            LogToMessanger().Wait();
+            LogToMessanger();
+
+            Helpers.PopulateUsers(client);
 
             client.UpdateEvent += Client_UpdateEvent;
             client.StartListening();
@@ -39,7 +41,7 @@ namespace Testing
                 switch (answer)
                 {
                     case "1":
-                        LogToMessanger().Wait();
+                        LogToMessanger();
                         break;
                     case "2":
                         Threads = GetLastThreads();
@@ -76,7 +78,7 @@ namespace Testing
             string restult = string.Empty;
 
             double timestamp = double.Parse(msg.timestamp);
-            var time = new System.DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var time = new System.DateTime(1970, 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var msgTime = time.AddMilliseconds(timestamp).ToShortTimeString();
             var from = Helpers.GetUser(msg.author);
 
@@ -124,7 +126,6 @@ namespace Testing
                     bool chatting = true;
                     while (chatting)
                     {
-                        Console.Write("Filip: ");
                         string message = Console.ReadLine();
 
                         if (String.Equals(message, "q", StringComparison.CurrentCultureIgnoreCase))
@@ -134,7 +135,7 @@ namespace Testing
                             break;
                         }
 
-                        var response = client.SendMessage(message, thread_id: CurrentThreadID, thread_type: ThreadType.GROUP);
+                        var response = client.SendMessage(message, thread_id: CurrentThreadID, thread_type: threads[uid].type);
                         response.Wait();
                     }
                 }
@@ -156,7 +157,7 @@ namespace Testing
             await client.DoLogout();
         }
 
-        private async static Task<bool> LogToMessanger()
+        private static bool LogToMessanger()
         {
             if (client == null)
             {
@@ -167,9 +168,10 @@ namespace Testing
             string password = "fifiit82.";
 
             // Login with username and password
-            var logged_in = await client.DoLogin(email, password);
+            Task<bool> logged_in = client.DoLogin(email, password);
+            logged_in.Wait();
 
-            if (logged_in)
+            if (logged_in.Result)
             {
                 Console.WriteLine("Successfully loged into the messanger!");
             }
@@ -177,7 +179,7 @@ namespace Testing
                 Console.WriteLine("ERROR: Couldn't connect to messanger");
             }
 
-            return logged_in;
+            return logged_in.Result;
         }
 
         private async static void InstantiateFBClient()

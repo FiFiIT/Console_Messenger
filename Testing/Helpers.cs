@@ -6,20 +6,25 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Linq;
+using fbchat_sharp.API;
+using System.Linq;
 
 namespace Testing
 {
     class Helpers
     {
-        private static List<User> users = new List<User>()
-        {
-            new User() { nick = "Adrian", uid = "unknow", author = "1833362494" },
-            new User() { nick = "Tobiasz", uid = "unknow", author = "100000839220751" },
-            new User() { nick = "Bialy", uid = "unknow", author = "625353328" },
-            new User() { nick = "Kitek", uid = "unknow", author = "1661885777" },
-            new User() { nick = "Me", uid = "unknow", author = "100002909168135" },
-            new User() { nick = "Tomek", uid = "unknow", author = "100000033516982" },
-        };
+        public static string CookiesFile = "cookies.xml";
+        private static List<FB_User> users;
+            
+        //    new List<FB_User>()
+        //{
+        //    new FB_User() { nick = "Adrian", uid = "unknow", author = "1833362494" },
+        //    new FB_User() { nick = "Tobiasz", uid = "unknow", author = "100000839220751" },
+        //    new FB_User() { nick = "Bialy", uid = "unknow", author = "625353328" },
+        //    new FB_User() { nick = "Kitek", uid = "unknow", author = "1661885777" },
+        //    new FB_User() { nick = "Me", uid = "unknow", author = "100002909168135" },
+        //    new FB_User() { nick = "Tomek", uid = "unknow", author = "100000033516982" },
+        //};
 
         public static void SerializeObject<T>(T serializableObject, string fileName)
         {
@@ -64,10 +69,22 @@ namespace Testing
 
             return objectOut;
         }
+        public static void PopulateUsers(MessengerClient client)
+        {
+            var fbUsers = client.fetchAllUsers();
+            fbUsers.Wait();
+            if(fbUsers.Result.Any())
+            {
+                users = fbUsers.Result;
+            }
 
+            var self = client.FetchProfile();
+            self.Wait();
+            users.Add(self.Result);
+        }
         public static string GetUser(string author)
         {
-            User result = users.FirstOrDefault(user => user.author.Equals(author));
+            FB_User result = users.FirstOrDefault(user => user.uid.Equals(author));
 
             if(result == null)
             {
@@ -75,7 +92,7 @@ namespace Testing
             }
             else
             {
-                return result.nick;
+                return result.first_name == null ? result.last_name : result.first_name;
             }
         }
     }
