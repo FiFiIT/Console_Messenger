@@ -1,8 +1,10 @@
 ﻿using fbchat_sharp.API;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Testing
@@ -12,6 +14,7 @@ namespace Testing
         static FBClient client;
         static List<FB_Thread> Threads { get; set; }
         static string CurrentThreadID { get; set; }
+        static StringBuilder builder;
 
         static void Main(string[] args)
         {
@@ -21,6 +24,8 @@ namespace Testing
         private async static void StartMessanger()
         {
             bool running = true;
+            bool firstRun = true;
+            builder = new StringBuilder();
 
             LogToMessanger();
 
@@ -31,12 +36,17 @@ namespace Testing
 
             while (running)
             {
-                Console.WriteLine("What do you want to do next?");
-                Console.WriteLine("1. Log In");
-                Console.WriteLine("2. Get last Threads");
-                Console.WriteLine("9. Exit");
+                string answer = "2";
 
-                string answer = Console.ReadLine();
+                if (!firstRun)
+                {
+                    Console.WriteLine("What do you want to do next?");
+                    Console.WriteLine("1. Log In");
+                    Console.WriteLine("2. Get last Threads");
+                    Console.WriteLine("9. Exit");
+
+                    answer = Console.ReadLine();
+                }
 
                 switch (answer)
                 {
@@ -61,15 +71,16 @@ namespace Testing
         private static void Client_UpdateEvent(object sender, UpdateEventArgs e)
         {
             FB_Message msg = e.Payload as FB_Message;
-            if(msg != null && !Helpers.GetUser(msg.author).Equals("Me"))
+            if (msg != null)
             {
                 string fromGroup = String.Empty;
-                if(!msg.thread_id.Equals(CurrentThreadID))
+                if (!msg.thread_id.Equals(CurrentThreadID))
                 {
                     fromGroup = $"{Threads.FirstOrDefault(t => t.uid.Equals(msg.thread_id)).name} ";
                 }
-
+                ClearCurrentLine();
                 Console.WriteLine($"\r{fromGroup}{PrintMSG(msg)}");
+                Console.Write(builder.ToString());
             }
         }
 
@@ -95,7 +106,7 @@ namespace Testing
             while (viewGorup)
             {
                 groupId = 0;
-                foreach (var thread in threads.Take(3))
+                foreach (var thread in threads.Take(5))
                 {
                     Console.WriteLine($"{groupId}: {thread.name}");
                     groupId++;
@@ -123,33 +134,94 @@ namespace Testing
                         Console.WriteLine(PrintMSG(msg));
                     }
 
+                    ConsoleKeyInfo input;
+                    string message = String.Empty;
+
                     bool chatting = true;
                     while (chatting)
                     {
-                        string message = Console.ReadLine();
-
-                        if (String.Equals(message, "q", StringComparison.CurrentCultureIgnoreCase))
+                        input = Console.ReadKey(intercept: true);
+                        while(input.Key != ConsoleKey.Enter)
                         {
-                            Console.WriteLine("exiting chat");
-                            chatting = false;
-                            break;
+                            if (input.Key == ConsoleKey.Tab)
+                            {
+                                HandleTabInput(builder, Threads);
+                            }
+                            else if(input.Key == ConsoleKey.Escape)
+                            {
+                                Console.WriteLine("Leaving chat");
+                                chatting = false;
+                                break;
+                            }
+                            else
+                            {
+                                HandleKeyInput(builder, input);
+                            }
+
+                            input = Console.ReadKey(intercept: true);
                         }
 
+                        message = builder.ToString();
+                        builder.Clear();
                         var response = client.SendMessage(message, thread_id: CurrentThreadID, thread_type: threads[uid].type);
                         response.Wait();
                     }
                 }
             }
         }
+
+        private static void HandleKeyInput(StringBuilder builder, ConsoleKeyInfo input)
+        {
+            var currentInput = builder.ToString();
+            if (input.Key == ConsoleKey.Backspace && currentInput.Length > 0)
+            {
+                builder.Remove(builder.Length - 1, 1);
+                ClearCurrentLine();
+
+                currentInput = currentInput.Remove(currentInput.Length - 1);
+                Console.Write(currentInput);
+            }
+            else
+            {
+                var key = input.KeyChar;
+                builder.Append(key);
+                Console.Write(key);
+            }
+        }
+
+        private static void HandleTabInput(StringBuilder builder, List<FB_Thread> data)
+        {
+            return;
+
+            var currentInput = builder.ToString();
+            var match = String.Empty;
+
+            if (string.IsNullOrEmpty(match))
+            {
+                return;
+            }
+
+            ClearCurrentLine();
+            builder.Clear();
+
+            Console.Write(match);
+            builder.Append(match);
+        }
+
+        private static void ClearCurrentLine()
+        {
+            var currentLine = Console.CursorTop;
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, currentLine);
+        }
+
         private static List<FB_Thread> GetLastThreads()
         {
             var threads = client.fetchThreadList();
             threads.Wait();
-            var result = threads.Result;
 
-            
-
-            return result;
+            return threads.Result;
         }
 
         private async static void LogOut()
@@ -170,14 +242,6 @@ namespace Testing
             // Login with username and password
             Task<bool> logged_in = client.DoLogin(email, password);
             logged_in.Wait();
-
-            if (logged_in.Result)
-            {
-                Console.WriteLine("Successfully loged into the messanger!");
-            }
-            {
-                Console.WriteLine("ERROR: Couldn't connect to messanger");
-            }
 
             return logged_in.Result;
         }
