@@ -236,8 +236,11 @@ namespace Testing
                 client = new FBClient();
             }
 
-            string email = "filip.tyborowski@gmail.com";
-            string password = "fifiit82.";
+            Console.WriteLine("Log to Facebook");
+            Console.Write("Emal: ");
+            string email = Console.ReadLine();
+            Console.Write("Password: ");
+            string password = Console.ReadLine();
 
             // Login with username and password
             Task<bool> logged_in = client.DoLogin(email, password);
@@ -250,11 +253,8 @@ namespace Testing
         {
             FBClient client = new FBClient();
 
-            string email = "filip.tyborowski@gmail.com";
-            string password = "wforemce82.";
-
             // Login with username and password
-            var logged_in = await client.DoLogin(email, password);
+            var logged_in = await client.DoLogin(String.Empty, String.Empty);
 
             // Check login was successful
             if (logged_in)
